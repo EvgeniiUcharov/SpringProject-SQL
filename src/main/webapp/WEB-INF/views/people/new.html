@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить человека</title>
+    <style>
+        /* Глобальный сброс для правильного расчета ширины */
+        html {
+            box-sizing: border-box;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+
+        :root {
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #2d3436;
+            --accent: #0984e3;
+            --error: #d63031;
+            --input-border: #dfe6e9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.2s;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-back {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            text-decoration: none;
+            color: #636e72;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Новый профиль</h2>
+
+    <form th:method="POST" th:action="@{/people}" th:object="${person}">
+
+        <div class="form-group">
+            <label for="name">ФИО:</label>
+            <input type="text" th:field="*{fio_person}" id="name" placeholder="Введите имя..."/>
+            <div class="error-message" th:if="${#fields.hasErrors('fio_person')}" th:errors="*{fio_person}">Ошибка имени</div>
+        </div>
+
+        <div class="form-group">
+            <label for="year_birth">Год рождения:</label>
+            <input type="text" th:field="*{year_birth}" id="year_birth" placeholder="Например, 1995"/>
+            <div class="error-message" th:if="${#fields.hasErrors('year_birth')}" th:errors="*{year_birth}">Ошибка года</div>
+        </div>
+
+        <input type="submit" class="btn-submit" value="Создать профиль"/>
+    </form>
+
+    <a th:href="@{/people}" class="btn-back">← Отмена</a>
+</div>
+
+</body>
+</html>

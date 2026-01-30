@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Редактировать книгу</title>
+  <style>
+    /* Глобальный сброс для правильного расчета ширины в 2026 году */
+    html { box-sizing: border-box; }
+    *, *:before, *:after { box-sizing: inherit; }
+
+    :root {
+      --bg: #f4f7f6;
+      --card-bg: #ffffff;
+      --text-main: #2d3436;
+      --text-secondary: #636e72;
+      --accent: #00b894; /* Зеленый цвет для процесса редактирования */
+      --error: #d63031;
+      --input-border: #dfe6e9;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 2.5rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 450px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: var(--accent);
+      font-size: 1.6rem;
+      letter-spacing: -0.5px;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid var(--input-border);
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+
+    .error-message {
+      color: var(--error);
+      font-size: 0.85rem;
+      margin-top: 5px;
+      font-weight: 500;
+    }
+
+    .btn-update {
+      width: 100%;
+      padding: 14px;
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 1rem;
+    }
+
+    .btn-update:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 184, 148, 0.3);
+    }
+
+    .btn-back {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .btn-back:hover {
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+
+
+
+
+<div class="card">
+  <h2>📝 Редактировать книгу</h2>
+
+  <!-- th:action использует id_book -->
+  <form th:method="PATCH" th:action="@{/books/{id}(id=*{id_book})}" th:object="${book}">
+
+    <div class="form-group">
+      <label for="title">Название</label>
+      <input type="text" th:field="*{title}" id="title" placeholder="Название книги"/>
+      <div class="error-message" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Ошибка название книги</div>
+    </div>
+
+    <!-- Пример добавления поля Автор (если оно есть в модели) -->
+    <div class="form-group">
+      <label for="author">Автор</label>
+      <input type="text" th:field="*{author}" id="author" placeholder="Имя автора"/>
+      <div class="error-message" th:if="${#fields.hasErrors('author')}" th:errors="*{author}">Ошибка автор</div>
+    </div>
+
+    <div class="form-group">
+      <label for="year">Год выпуска</label>
+      <input type="text" th:field="*{year}" id="year" placeholder="Например: 1954"/>
+      <div class="error-message" th:if="${#fields.hasErrors('year')}" th:errors="*{year}">Ошибка год выпуска</div>
+    </div>
+
+    <button type="submit" class="btn-update">Сохранить изменения</button>
+  </form>
+
+
+  <a th:href="@{/books/{id}(id=${book.id_book})}" class="btn-back">← Отмена</a>
+</div>

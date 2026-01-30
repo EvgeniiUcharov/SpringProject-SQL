@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Просмотр книги</title>
+  <style>
+    * {
+      box-sizing: border-box; /* Чтобы padding не раздувал ширину */
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #f4f7f6;
+      --card-bg: #ffffff;
+      --text-main: #2d3436;
+      --text-secondary: #636e72;
+      --accent: #0984e3;
+      --danger: #d63031;
+      --edit: #00b894;
+      --border: #dfe6e9;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 2.5rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+    }
+
+    .profile-icon {
+      width: 70px; height: 70px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      display: flex; justify-content: center; align-items: center;
+      font-size: 2rem; margin: 0 auto 1rem;
+    }
+
+    h2 { margin: 0.5rem 0; font-size: 1.6rem; color: var(--text-main); }
+    .author { font-style: italic;  color: var(--text-secondary); margin-bottom: 0.5rem; }
+    .info { color: var(--text-secondary); margin-bottom: 1.5rem; }
+
+    /* Стили для блоков владения */
+    .ownership-box {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+
+    select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      margin: 10px 0;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+
+    .btn-release { background: var(--text-secondary); color: white; }
+    .btn-assign { background: var(--accent); color: white; }
+    .btn-edit { background: var(--edit); color: white; }
+    .btn-delete { background: var(--danger); color: white; }
+    .btn-back { color: var(--text-secondary); background: none; font-size: 0.9rem; }
+
+    .btn:hover { opacity: 0.9; transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="profile-icon">📚</div>
+
+  <h2 th:text="${book.title +', ' + book.author + ', '+ book.year}">Название книги</h2>
+
+
+  <!-- БЛОК 1: Книга у человека -->
+  <div th:if="${owner}" class="ownership-box">
+    <p>Книга сейчас у:</p>
+    <a style="font-weight: bold; color: var(--accent); text-decoration: none;"
+       th:href="@{/people/{id}(id=${owner.id_person})}"
+       th:text="${owner.fio_person}">Имя Фамилия</a>
+
+    <form th:method="PATCH" th:action="@{/books/{id}/release(id=${book.id_book})}">
+      <button type="submit" class="btn btn-release">Вернуть книгу</button>
+    </form>
+  </div>
+
+  <!-- БЛОК 2: Книга свободна -->
+  <div th:if="${owner == null}" class="ownership-box">
+    <p>Эта книга сейчас свободна</p>
+
+    <form th:method="PATCH" th:action="@{/books/{id}/assign(id=${book.id_book})}">
+      <label for="person">Кому назначить её?</label>
+      <select th:object="${person}" th:field="*{id_person}" id="person">
+        <option th:each="pers : ${people}" th:value="${pers.id_person}" th:text="${pers.fio_person}">ФИО</option>
+      </select>
+      <button type="submit" class="btn btn-assign">Назначить</button>
+    </form>
+  </div>
+
+  <!-- Общие действия -->
+  <div class="actions">
+    <a class="btn btn-edit" th:href="@{/books/{id}/edit(id=${book.id_book})}">Редактировать</a>
+
+    <form th:method="DELETE" th:action="@{/books/{id}(id=${book.id_book})}">
+      <button type="submit" class="btn btn-delete">Удалить книгу</button>
+    </form>
+
+    <a th:href="@{/books}" class="btn btn-back">← Вернуться к списку книг</a>
+    <a th:href="@{/people}" class="btn btn-back">← Вернуться к списку читателей</a>
+  </div>
+</div>
+
+</body>
+</html>
