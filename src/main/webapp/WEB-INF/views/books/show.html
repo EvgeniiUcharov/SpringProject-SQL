@@ -107,10 +107,10 @@
   <div th:if="${owner}" class="ownership-box">
     <p>Книга сейчас у:</p>
     <a style="font-weight: bold; color: var(--accent); text-decoration: none;"
-       th:href="@{/people/{id}(id=${owner.id_person})}"
-       th:text="${owner.fio_person}">Имя Фамилия</a>
+       th:href="@{/people/{id}(id=${owner.getId()})}"
+       th:text="${owner.fioPerson}">Имя Фамилия</a>
 
-    <form th:method="PATCH" th:action="@{/books/{id}/release(id=${book.id_book})}">
+    <form th:method="PATCH" th:action="@{/books/{id}/release(id=${book.getId()})}">
       <button type="submit" class="btn btn-release">Вернуть книгу</button>
     </form>
   </div>
@@ -119,10 +119,10 @@
   <div th:if="${owner == null}" class="ownership-box">
     <p>Эта книга сейчас свободна</p>
 
-    <form th:method="PATCH" th:action="@{/books/{id}/assign(id=${book.id_book})}">
+    <form th:method="PATCH" th:action="@{/books/{id}/assign(id=${book.getId()})}">
       <label for="person">Кому назначить её?</label>
-      <select th:object="${person}" th:field="*{id_person}" id="person">
-        <option th:each="pers : ${people}" th:value="${pers.id_person}" th:text="${pers.fio_person}">ФИО</option>
+      <select th:object="${person}" th:field="*{id}" id="person">
+        <option th:each="pers : ${people}" th:value="${pers.getId()}" th:text="${pers.fioPerson}">ФИО</option>
       </select>
       <button type="submit" class="btn btn-assign">Назначить</button>
     </form>
@@ -130,14 +130,15 @@
 
   <!-- Общие действия -->
   <div class="actions">
-    <a class="btn btn-edit" th:href="@{/books/{id}/edit(id=${book.id_book})}">Редактировать</a>
+    <a class="btn btn-edit" th:href="@{/books/{id}/edit(id=${book.getId()})}">Редактировать</a>
 
-    <form th:method="DELETE" th:action="@{/books/{id}(id=${book.id_book})}">
+    <form th:method="DELETE" th:action="@{/books/{id}(id=${book.getId()})}">
       <button type="submit" class="btn btn-delete">Удалить книгу</button>
     </form>
 
     <a th:href="@{/books}" class="btn btn-back">← Вернуться к списку книг</a>
     <a th:href="@{/people}" class="btn btn-back">← Вернуться к списку читателей</a>
+
   </div>
 </div>
 

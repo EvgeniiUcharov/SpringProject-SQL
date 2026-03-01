@@ -96,11 +96,11 @@
 <div class="card">
     <div class="profile-icon">👤</div>
 
-    <h2 th:text="${person.getFio_person()}">Имя Фамилия</h2>
+    <h2 th:text="${person.getFioPerson()}">Имя Фамилия</h2>
 
     <div class="info">
         <span>Год рождения: </span>
-        <span th:text="${person.getYear_birth()}">1990</span>
+        <span th:text="${person.getYearBirth()}">1990</span>
     </div>
 
     <!-- Секция книг -->
@@ -113,7 +113,10 @@
 
         <ul th:if="${!books.isEmpty()}" style="padding: 0; margin: 0;">
             <li class="book-item" th:each="book : ${books}">
-                <span th:text="|«${book.getTitle()}», ${book.getAuthor()}, ${book.getYear()}|">Название, Автор, Год</span>
+
+
+                <span th:text="|${book.getTitle()}, ${book.getAuthor()}, ${book.getYear()}|"
+                th:style="${book.isExpired()} ? 'color:red' : 'color: black'">Название, Автор, Год</span>
             </li>
         </ul>
 
@@ -121,11 +124,11 @@
 
     <!-- Кнопки действий (всегда видны) -->
     <div class="actions">
-        <a class="btn btn-edit" th:href="@{/people/{id}/edit(id=${person.getId_person()})}">
+        <a class="btn btn-edit" th:href="@{/people/{id}/edit(id=${person.getId()})}">
             Редактировать профиль
         </a>
 
-        <form th:method="DELETE" th:action="@{/people/{id}(id=${person.getId_person()})}" style="width: 100%">
+        <form th:method="DELETE" th:action="@{/people/{id}(id=${person.getId()})}" style="width: 100%">
             <button type="submit" class="btn btn-delete">Удалить профиль</button>
         </form>
     </div>

@@ -1,22 +1,22 @@
 package ru.ucharov.springcourse.util;
 
-import jakarta.validation.ConstraintViolation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import ru.ucharov.springcourse.dao.PersonDAO;
 import ru.ucharov.springcourse.models.Person;
+import ru.ucharov.springcourse.services.PeopleService;
 
 
 @Component
 public class PersonValidator implements Validator {
-    private final PersonDAO personDAO;
+
+    private final PeopleService peopleService;
 
     @Autowired
-    public PersonValidator(PersonDAO personDAO) {
-        this.personDAO = personDAO;
+    public PersonValidator(PeopleService peopleService) {
+        this.peopleService = peopleService;
     }
 
     @Override
@@ -28,8 +28,7 @@ public class PersonValidator implements Validator {
     public void validate(Object o, Errors errors) {
         Person person = (Person) o;
 
-        if(personDAO.getPersonByFullName(person.getFio_person()).isPresent())
-            errors.rejectValue("fio_person", "", "Человек с таким ФИО уже существует");
+        if(peopleService.getPersonByFio_person(person.getFioPerson()).isPresent() && peopleService.getPersonByFio_person(person.getFioPerson()).get().getId() != person.getId() )
+            errors.rejectValue("fioPerson", "", "Человек с таким ФИО уже существует");
     }
-
 }

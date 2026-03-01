@@ -126,10 +126,10 @@
 <div class="container">
     <!-- Цикл Thymeleaf по списку людей -->
     <div th:each="person : ${people}">
-        <a class="person-card" th:href="@{/people/{id}(id=${person.getId_person()})}">
+        <a class="person-card" th:href="@{/people/{id}(id=${person.getId()})}">
             <div class="person-info">
-                <span class="person-name" th:text="${person.getFio_person()}">Иван Иванов</span>
-                <span class="person-meta" th:text="${person.getYear_birth() + ' г.р.'}">1990 г.р.</span>
+                <span class="person-name" th:text="${person.getFioPerson()}">Иван Иванов</span>
+                <span class="person-meta" th:text="${person.getYearBirth() + ' г.р.'}">1990 г.р.</span>
             </div>
             <div class="arrow">→</div>
         </a>

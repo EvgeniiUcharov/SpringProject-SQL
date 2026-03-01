@@ -31,13 +31,60 @@
 
     h1 { font-size: 1.8rem; margin-bottom: 25px; color: var(--text-main); letter-spacing: -0.5px; }
 
-    /* Сделали контейнер уже (было 500px, стало 400px) */
     .container { width: 100%; max-width: 400px; }
+
+
+    .search-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .search-wrapper input[type="text"] {
+      width: 100%;
+      padding: 12px 45px 12px 15px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 1rem;
+      outline: none;
+      background: var(--card-bg);
+      transition: border-color 0.2s;
+    }
+
+    .search-wrapper input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+
+    .search-icon-btn {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px;
+      transition: color 0.2s;
+    }
+
+    .search-icon-btn:hover {
+      color: var(--accent);
+    }
+
+    .search-icon-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
 
     .book-card {
       background: var(--card-bg);
       margin-bottom: 8px;
-      padding: 12px 18px; /* Уменьшили внутренние отступы для компактности */
+      padding: 12px 18px;
       border-radius: 10px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.05);
       display: flex;
@@ -55,13 +102,12 @@
       border-color: var(--accent);
     }
 
-    /* Изменили на row для размещения в одну строку */
     .book-info {
       display: flex;
       flex-direction: row;
       align-items: baseline;
-      gap: 10px; /* Расстояние между названием и годом */
-      overflow: hidden; /* Чтобы длинные названия не ломали верстку */
+      gap: 10px;
+      overflow: hidden;
     }
 
     .book-name {
@@ -70,20 +116,25 @@
       color: var(--accent);
       white-space: nowrap;
       overflow: hidden;
-      text-overflow: ellipsis; /* Добавляет "..." если название слишком длинное */
+      text-overflow: ellipsis;
     }
 
     .book-meta {
       font-size: 0.85rem;
       color: var(--text-secondary);
-      white-space: nowrap; /* Чтобы год не переносился */
+      white-space: nowrap;
     }
 
     .arrow { color: var(--border); font-size: 1rem; transition: color 0.2s; margin-left: 10px; }
     .book-card:hover .arrow { color: var(--accent); }
 
-    .btn-add {
+    .btn-group {
+      display: flex;
+      gap: 10px;
       margin-top: 20px;
+    }
+
+    .btn-add {
       background-color: var(--accent);
       color: white;
       padding: 10px 20px;
@@ -101,6 +152,43 @@
     }
 
     .empty-state { text-align: center; color: var(--text-secondary); margin-top: 50px; }
+
+    /* --- СТИЛИ ПАГИНАЦИИ --- */
+    .pagination {
+      margin-top: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .pagination a {
+      text-decoration: none;
+      color: #555;
+      background: #f8f9fa;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    .pagination a:hover {
+      border-color: var(--accent);
+      background-color: #eeeeee;
+      transform: translateY(-1px);
+    }
+
+    .pagination span {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+      background: #ececec;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
   </style>
 </head>
 <body>
@@ -108,8 +196,22 @@
 <h1>📚 Библиотека. Список книг</h1>
 
 <div class="container">
+
+  <!-- Форма поиска с лупой -->
+  <form th:method="POST" th:action="@{/books/search}" class="search-form">
+    <div class="search-wrapper">
+      <input type="text" id="query" name="query" placeholder="Найти книгу..." th:value="${query}"/>
+      <button type="submit" class="search-icon-btn">
+        <svg viewBox="0 0 24 24">
+          <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
+      </button>
+    </div>
+  </form>
+
+  <!-- Список книг -->
   <div th:each="book : ${books}">
-    <a class="book-card" th:href="@{/books/{id}(id=${book.getId_book()})}">
+    <a class="book-card" th:href="@{/books/{id}(id=${book.getId()})}">
       <div class="book-info">
         <span class="book-name" th:text="${book.getTitle()}">Название книги</span>
         <span class="book-meta" th:text="|(${book.getYear()} г.)|"> (2024 г.)</span>
@@ -123,7 +225,24 @@
   </div>
 </div>
 
-<a th:href="@{/books/new}" class="btn-add">+ Добавить книгу</a>
+<div class="pagination">
+  <a th:if="${currentPage > 0}"
+     th:href="@{/books(page=${currentPage -1}, books_per_page=${booksPerPage}, sort_by_year=${sortByYear})}">
+    &larr; Назад
+  </a>
+  <span th:text="' Страница ' + ${currentPage} ">0</span>
+
+  <a th:if="${not #lists.isEmpty(books) and books.size() == booksPerPage}"
+     th:href="@{/books(page=${currentPage + 1}, books_per_page=${booksPerPage}, sort_by_year=${sortByYear})}">
+    Вперед &rarr;
+  </a>
+</div>
+
+
+
+<div class="btn-group">
+  <a th:href="@{/books/new}" class="btn-add">+ Добавить книгу</a>
+</div>
 
 </body>
 </html>

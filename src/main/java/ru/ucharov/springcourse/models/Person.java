@@ -1,52 +1,73 @@
 package ru.ucharov.springcourse.models;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import java.util.List;
 
 /**
  * @author Ucharov Evgenii
  */
+@Entity
+@Table(name = "person")
 public class Person {
-    private int id_person;
 
-    @NotEmpty(message = "Name should not be empty")
-    @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters")
-    private String fio_person;
+    @Id
+    @Column(name= "id_person")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-    @Min(value = 1900, message = "Age should be greater than 1900")
-    @Max(value = 2026, message = "Year of birth should not be in the future")
-    private int year_birth;
+    @NotEmpty(message = "Имя не должно быть пустым")
+    @Size(min = 2, max = 100, message = "Имя должно быть длиной от 2 до 100 символов")
+    @Column(name = "fio_person")
+    private String fioPerson;
 
+    @Min(value = 1900, message = "Год рождения должен быть больше чем 1900")
+    @Column(name = "year_birth")
+    private int yearBirth;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Book> books;
+
+//    Конструктор по умолчанию нужен для Spring
     public Person() {
 
     }
 
-    public Person(int id_person, String fio_person, int year_birth) {
-        this.id_person = id_person;
-        this.fio_person = fio_person;
-        this.year_birth = year_birth;
+    public Person(String fioPerson, int yearBirth) {
+        this.fioPerson = fioPerson;
+        this.yearBirth = yearBirth;
     }
 
-    public int getId_person() {
-        return id_person;
+
+    public int getId() {
+        return id;
     }
 
-    public void setId_person(int id_person) {
-        this.id_person = id_person;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getFio_person() {
-        return fio_person;
+    public String getFioPerson() {
+        return fioPerson;
     }
 
-    public void setFio_person(String fio_person) {
-        this.fio_person = fio_person;
+    public void setFioPerson(String fioPerson) {
+        this.fioPerson = fioPerson;
     }
 
-    public int getYear_birth() {
-        return year_birth;
+    public int getYearBirth() {
+        return yearBirth;
     }
 
-    public void setYear_birth(int year_birth) {
-        this.year_birth = year_birth;
+    public void setYearBirth(int yearBirth) {
+        this.yearBirth = yearBirth;
+    }
+
+    public List<Book> getBooks() {
+        return books;
+    }
+
+    public void setBooks(List<Book> books) {
+        this.books = books;
     }
 }

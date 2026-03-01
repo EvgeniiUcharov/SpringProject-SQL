@@ -4,10 +4,6 @@ import jakarta.servlet.*;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
-
-//import jakarta.servlet.DispatcherType;
-//import jakarta.servlet.FilterRegistration;
-//import javax.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import java.util.EnumSet;
 

@@ -117,14 +117,14 @@
 
         <div class="form-group">
             <label for="name">ФИО:</label>
-            <input type="text" th:field="*{fio_person}" id="name" placeholder="Введите имя..."/>
-            <div class="error-message" th:if="${#fields.hasErrors('fio_person')}" th:errors="*{fio_person}">Ошибка имени</div>
+            <input type="text" th:field="*{fioPerson}" id="name" placeholder="Введите ФИО..."/>
+            <div class="error-message" th:if="${#fields.hasErrors('fioPerson')}" th:errors="*{fioPerson}">Ошибка имени</div>
         </div>
 
         <div class="form-group">
             <label for="year_birth">Год рождения:</label>
-            <input type="text" th:field="*{year_birth}" id="year_birth" placeholder="Например, 1995"/>
-            <div class="error-message" th:if="${#fields.hasErrors('year_birth')}" th:errors="*{year_birth}">Ошибка года</div>
+            <input type="text" th:field="*{yearBirth}" id="year_birth" placeholder="Например, 1995"/>
+            <div class="error-message" th:if="${#fields.hasErrors('yearBirth')}" th:errors="*{yearBirth}">Ошибка года</div>
         </div>
 
         <input type="submit" class="btn-submit" value="Создать профиль"/>

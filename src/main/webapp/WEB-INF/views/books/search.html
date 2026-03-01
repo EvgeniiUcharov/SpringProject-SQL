@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск книг</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #2d3436;
+            --text-secondary: #636e72;
+            --accent: #0984e3;
+            --border: #dfe6e9;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .search-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            margin-bottom: 2rem;
+        }
+
+        h2 { margin-bottom: 1.5rem; font-size: 1.4rem; color: var(--text-main); text-align: center; }
+
+        /* Контейнер для поля ввода и иконки */
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .search-form input[type="text"] {
+            width: 100%;
+            padding: 12px 45px 12px 15px; /* Отступ справа под лупу */
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-form input[type="text"]:focus {
+            border-color: var(--accent);
+        }
+
+        /* Кнопка-лупа внутри инпута */
+        .search-icon-btn {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            transition: color 0.2s, transform 0.1s;
+        }
+
+        .search-icon-btn:hover {
+            color: var(--accent);
+        }
+
+        .search-icon-btn:active {
+            transform: scale(0.9);
+        }
+
+        .search-icon-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .btn-back {
+            color: var(--text-secondary);
+            background: none;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .btn-back:hover {
+            color: var(--accent);
+        }
+
+        /* Стили для результатов */
+        .result-item {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border-left: 5px solid var(--accent);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+
+        .book-title { font-weight: bold; color: var(--text-main); font-size: 1.1rem; display: block; margin-bottom: 5px; }
+        .status-text { font-size: 0.9rem; margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; }
+        .status-free { color: #00b894; font-weight: 500; }
+        .status-busy { color: var(--text-secondary); }
+        .owner-name { color: var(--accent); font-weight: bold; }
+        .no-results { text-align: center; color: var(--text-secondary); margin-top: 2rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Блок поиска -->
+    <div class="search-card">
+        <h2>Поиск книг</h2>
+        <form th:method="POST" th:action="@{/books/search}" class="search-form">
+            <div class="search-wrapper">
+                <input type="text" id="query" name="query" placeholder="Найти книгу..." th:value="${query}"/>
+
+                <!-- Кнопка-иконка (Лупа) -->
+                <button type="submit" class="search-icon-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                </button>
+            </div>
+        </form>
+        <a th:href="@{/books}" class="btn btn-back">← На главную</a>
+    </div>
+
+    <!-- Блок результатов -->
+    <div th:if="${books}">
+        <!-- Если ничего не найдено -->
+        <div th:if="${books.isEmpty()}" class="no-results">
+            <p>Книг по вашему запросу не найдено 😕</p>
+        </div>
+
+        <!-- Список найденных книг -->
+        <div th:each="book : ${books}" class="result-item">
+            <span class="book-title" th:text="|${book.title}, ${book.author}, ${book.year}|">Название книги</span>
+
+            <div class="status-text">
+                <!-- Книга у кого-то -->
+                <div th:if="${book.getOwner() != null}" class="status-busy">
+                    <span>Сейчас у: </span>
+                    <span class="owner-name" th:text="${book.getOwner().fioPerson}">Имя владельца</span>
+                </div>
+
+                <!-- Книга свободна -->
+                <div th:if="${book.getOwner() == null}" class="status-free">
+                    <span>Свободна</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
